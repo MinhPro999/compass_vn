@@ -222,7 +222,7 @@ class _UserInfoBarState extends State<UserInfoBar> {
         }
       } else {
         setState(() {
-          _guaResult = "Chưa có đủ dữ liệu để tính toán.";
+          _guaResult = "Chưa có đủ dữ liệu để tính toán";
         });
       }
     }
