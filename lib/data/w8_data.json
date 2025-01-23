@@ -1,0 +1,36 @@
+{
+  "compass": [
+    {"background": "assets/images_compass/background_8.jpg", "co": "assets/images_compass/lb_w8.png"}
+  ],
+  "huong_tot_xau": [
+    { "huong": "Đông", "cung": "Lục Sát", "tot_xau": "Hướng Xấu", "color_chu": "0xFF800000", "color_box": "0xFFFFAAAA" },
+    { "huong": "Bắc", "cung": "Ngũ Quỷ", "tot_xau": "Hướng Xấu", "color_chu": "0xFF800000", "color_box": "0xFFFFAAAA" },
+    { "huong": "Nam", "cung": "Họa Hại", "tot_xau": "Hướng Xấu", "color_chu": "0xFF800000", "color_box": "0xFFFFAAAA" },
+    { "huong": "Đông Nam", "cung": "Tuyệt Mạng", "tot_xau": "Hướng Xấu", "color_chu": "0xFF800000", "color_box": "0xFFFFAAAA" },
+    { "huong": "Tây", "cung": "Phước Đức", "tot_xau": "Hướng Tốt", "color_chu": "0xFFFFFFFF", "color_box": "0xFF01A868" },
+    { "huong": "Tây Bắc", "cung": "Thiên Y", "tot_xau": "Hướng Tốt", "color_chu": "0xFFFFFFFF", "color_box": "0xFF01A868" },
+    { "huong": "Tây Nam", "cung": "Sinh Khí", "tot_xau": "Hướng Tốt", "color_chu": "0xFFFFFFFF", "color_box": "0xFF01A868" },
+    { "huong": "Đông Bắc", "cung": "Phục Vị", "tot_xau": "Hướng Tốt", "color_chu": "0xFFFFFFFF", "color_box": "0xFF01A868" }
+  ],
+  "y_nghia_cung": [
+    { "cung": "Lục Sát", "y_nghia": "Mang đến xung khắc, mất mát và rủi ro pháp lý." },
+    { "cung": "Ngũ Quỷ", "y_nghia": "Gây thị phi, tai nạn và thất thoát tài sản." },
+    { "cung": "Họa Hại", "y_nghia": "Dễ thất bại, gặp vận rủi và rắc rối không mong muốn." },
+    { "cung": "Tuyệt Mạng", "y_nghia": "Đại diện cho mất mát, bệnh tật và hiểm họa nghiêm trọng." },
+    { "cung": "Phước Đức", "y_nghia": "Tăng cường sự hòa thuận, bền vững trong các mối quan hệ." },
+    { "cung": "Thiên Y", "y_nghia": "Hỗ trợ sức khỏe, gặp quý nhân, và mang lại bình an." },
+    { "cung": "Sinh Khí", "y_nghia": "Mang lại tài lộc, thành công, và phát triển mạnh mẽ." },
+    { "cung": "Phục Vị", "y_nghia": "Giúp ổn định tinh thần, bình an, và vượt qua khó khăn." }
+  ],
+  "nen_khong_nen": [
+    { "cung": "Lục Sát", "nen": "Hướng chậu rửa hoặc WC.", "khong_nen": "Không làm hướng chính nhà, phòng khách." },
+    { "cung": "Ngũ Quỷ", "nen": "Đặt hướng nhà vệ sinh.", "khong_nen": "Không đặt phòng khách, bếp hoặc cửa chính." },
+    { "cung": "Họa Hại", "nen": "Đặt hướng chậu rửa.", "khong_nen": "Không đặt hướng bếp, phòng khách hoặc phòng làm việc." },
+    { "cung": "Tuyệt Mạng", "nen": "Hướng chậu rửa hoặc WC.", "khong_nen": "Không dùng làm hướng chính nhà, phòng ngủ hoặc bếp." },
+    { "cung": "Phước Đức", "nen": "Dùng làm hướng chính nhà, phòng khách.", "khong_nen": "Không nên đặt bếp hoặc nhà vệ sinh." },
+    { "cung": "Thiên Y", "nen": "Đặt phòng ngủ, nơi thờ cúng.", "khong_nen": "Không thích hợp làm hướng nhà vệ sinh hoặc nhà kho." },
+    { "cung": "Sinh Khí", "nen": "Xây nhà, đặt hướng cửa chính, làm phòng khách.", "khong_nen": "Không áp dụng cho nơi cần sự yên tĩnh." },
+    { "cung": "Phục Vị", "nen": "Đặt bàn thờ, giường ngủ, nơi thiền định.", "khong_nen": "Không phù hợp làm phòng làm việc." }
+  ]
+
+}
