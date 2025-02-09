@@ -30,7 +30,7 @@
     { "cung": "Họa Hại", "nen": "Đặt hướng chậu rửa.", "khong_nen": "Không đặt hướng bếp, phòng khách hoặc phòng làm việc." },
     { "cung": "Lục Sát", "nen": "Hướng chậu rửa hoặc WC.", "khong_nen": "Không làm hướng chính nhà, phòng khách." },
     { "cung": "Tuyệt Mạng", "nen": "Hướng chậu rửa hoặc WC.", "khong_nen": "Không dùng làm hướng chính nhà, phòng ngủ hoặc bếp." },
-    { "cung": "Ngũ Quỷ", "nen": "Đặt hướng nhà vệ sinh.", "khong_nen": "Không đặt phòng khách, bếp hoặc cửa chính." }
+    { "cung": "Ngũ Quỷ", "nen": "Đặt hướng nhà vệ sinh.", "khong_nen": "Không đặt hướng phòng khách, bếp hoặc cửa chính." }
   ]
 
 }
