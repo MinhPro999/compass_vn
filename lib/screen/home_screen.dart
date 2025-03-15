@@ -1,6 +1,7 @@
 import 'package:compass_vn/core/culcalator_monster.dart';
 import 'package:compass_vn/screen/screen_compass.dart';
 import 'package:compass_vn/screen/screen_compass_8.dart';
+import 'package:compass_vn/screen/screen_compass_map.dart';
 import 'package:compass_vn/widgets/funtion_gidview.dart';
 import 'package:compass_vn/widgets/user_info_bar.dart';
 import 'package:flutter/material.dart';
@@ -59,63 +60,79 @@ class HomeScreen extends StatelessWidget {
                                 ),
                                 shrinkWrap: true,
                                 physics: const NeverScrollableScrollPhysics(),
-                                itemCount: 2,
+                                itemCount: 3,
                                 itemBuilder: (context, index) {
-                                  return index == 0
-                                      ? funtionGidview(
-                                          'assets/images/normal_compass.JPG',
-                                          'La bàn cơ bản',
-                                          () {
-                                            Navigator.push(
-                                              context,
-                                              MaterialPageRoute(
-                                                builder: (context) =>
-                                                    const CompassDetailScreen(
-                                                  title: '',
-                                                  description: '',
-                                                ),
-                                              ),
-                                            );
-                                          },
-                                        )
-                                      : funtionGidview(
-                                          'assets/images/24_directions.JPG',
-                                          'La bàn theo tuổi',
-                                          () {
-                                            // Kiểm tra xem giới tính hoặc năm sinh có bị rỗng không
-                                            if (genderGlobal.isEmpty ||
-                                                yearGlobal.isEmpty) {
-                                              showDialog(
-                                                context: context,
-                                                builder: (context) =>
-                                                    AlertDialog(
-                                                  title: const Text(
-                                                      'Thông tin bị thiếu!'),
-                                                  content: const Text(
-                                                      'Bạn cần lựa chọn giới tính và nhập đầy đủ năm sinh ở ngay phía trên trước khi sử dụng La Bàn này.'),
-                                                  actions: [
-                                                    TextButton(
-                                                      onPressed: () {
-                                                        Navigator.of(context)
-                                                            .pop(); // Đóng dialog
-                                                      },
-                                                      child:
-                                                          const Text('ĐỒNG Ý'),
-                                                    ),
-                                                  ],
-                                                ),
-                                              );
-                                            } else {
-                                              Navigator.push(
-                                                context,
-                                                MaterialPageRoute(
-                                                  builder: (context) =>
-                                                      const BatTrachScreen(),
-                                                ),
-                                              );
-                                            }
-                                          },
+                                  if (index == 0) {
+                                    return funtionGidview(
+                                      'assets/images/normal_compass.JPG',
+                                      'La bàn cơ bản',
+                                      () {
+                                        Navigator.push(
+                                          context,
+                                          MaterialPageRoute(
+                                            builder: (context) =>
+                                                const CompassDetailScreen(
+                                              title: '',
+                                              description: '',
+                                            ),
+                                          ),
                                         );
+                                      },
+                                    );
+                                  } else if (index == 1) {
+                                    return funtionGidview(
+                                      'assets/images/24_directions.JPG',
+                                      'La bàn theo tuổi',
+                                      () {
+                                        if (genderGlobal.isEmpty ||
+                                            yearGlobal.isEmpty) {
+                                          showDialog(
+                                            context: context,
+                                            builder: (context) => AlertDialog(
+                                              title: const Text(
+                                                  'Thông tin bị thiếu!'),
+                                              content: const Text(
+                                                'Bạn cần lựa chọn giới tính và nhập đầy đủ năm sinh ở ngay phía trên trước khi sử dụng La Bàn này.',
+                                              ),
+                                              actions: [
+                                                TextButton(
+                                                  onPressed: () {
+                                                    Navigator.of(context).pop();
+                                                  },
+                                                  child: const Text('ĐỒNG Ý'),
+                                                ),
+                                              ],
+                                            ),
+                                          );
+                                        } else {
+                                          Navigator.push(
+                                            context,
+                                            MaterialPageRoute(
+                                              builder: (context) =>
+                                                  const BatTrachScreen(),
+                                            ),
+                                          );
+                                        }
+                                      },
+                                    );
+                                  } else {
+                                    return funtionGidview(
+                                      'assets/images/24_directions.JPG',
+                                      'La bàn địa hình',
+                                      () {
+                                        Navigator.push(
+                                          context,
+                                          MaterialPageRoute(
+                                            builder: (context) =>
+                                                const CompassMapScreen(
+                                              title: '',
+                                              description: '',
+                                            ),
+                                          ),
+                                        );
+                                      },
+                                    );
+                                  }
                                 },
                               ),
                             ],

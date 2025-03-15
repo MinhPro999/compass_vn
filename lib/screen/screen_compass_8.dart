@@ -3,12 +3,10 @@ import 'dart:convert';
 
 import 'package:compass_vn/core/culcalator_monster.dart';
 import 'package:compass_vn/core/main_compass.dart';
-import 'package:compass_vn/core/streambuilder_degree.dart';
 import 'package:compass_vn/widgets/build_infobox_8.dart';
 import 'package:compass_vn/widgets/user_info_bar.dart';
 import 'package:flutter/material.dart';
 import 'package:flutter/services.dart';
-import 'package:flutter_compass/flutter_compass.dart';
 
 int guaNumber00 = 0;
 
@@ -28,6 +26,9 @@ class BatTrachScreenState extends State<BatTrachScreen> {
   Map<String, dynamic> yNghiaCungMap = {};
   Map<String, dynamic> nenKhongNenMap = {};
   StreamSubscription? _compassSubscription;
+
+  // Kênh nhận dữ liệu từ native
+  static const EventChannel _compassChannel = EventChannel('compass_stream');
 
   @override
   Widget build(BuildContext context) {
@@ -65,10 +66,8 @@ class BatTrachScreenState extends State<BatTrachScreen> {
             child: Padding(
               padding: const EdgeInsets.all(16.0),
               child: Center(
-                // Căn giữa toàn bộ nội dung
                 child: Column(
-                  mainAxisSize:
-                      MainAxisSize.min, // Tối ưu chiều dọc cho nội dung
+                  mainAxisSize: MainAxisSize.min,
                   mainAxisAlignment: MainAxisAlignment.start,
                   crossAxisAlignment: CrossAxisAlignment.center,
                   children: [
@@ -89,23 +88,38 @@ class BatTrachScreenState extends State<BatTrachScreen> {
                       ],
                     ),
                     const SizedBox(height: 4),
-                    StreamBuilder<CompassEvent>(
-                      stream: FlutterCompass.events,
+                    StreamBuilder<double>(
+                      stream: _compassChannel
+                          .receiveBroadcastStream()
+                          .map((event) => event as double),
                       builder: (context, snapshot) {
-                        final CompassEvent? event = snapshot.data;
-                        final headingData = getHeadingData(event?.heading);
-                        final double? heading = headingData['heading'];
-                        final String direction = headingData['direction'];
+                        if (snapshot.connectionState ==
+                            ConnectionState.waiting) {
+                          return const Text(
+                            'Đang tải dữ liệu...',
+                            style: TextStyle(fontSize: 16, color: Colors.white),
+                          );
+                        }
+
+                        if (snapshot.hasError) {
+                          return const Text(
+                            'Lỗi khi đọc dữ liệu cảm biến!',
+                            style: TextStyle(fontSize: 16, color: Colors.white),
+                          );
+                        }
+
+                        final double? heading = snapshot.data;
 
                         if (heading == null) {
                           return const Text(
                             'Không có dữ liệu cảm biến!',
-                            style: TextStyle(
-                              fontSize: 16,
-                              color: Colors.white,
-                            ),
+                            style: TextStyle(fontSize: 16, color: Colors.white),
                           );
                         }
+
+                        final headingData = getHeadingData(heading);
+                        final double? processedHeading = headingData['heading'];
+                        final String direction = headingData['direction'];
 
                         final info = _getDetailedInfo(direction);
                         final Color colorChu = Color(int.parse(
@@ -122,7 +136,7 @@ class BatTrachScreenState extends State<BatTrachScreen> {
                             "nen": info['nen'] ?? '',
                             "khong_nen": info['khong_nen'] ?? '',
                           },
-                          heading: heading,
+                          heading: processedHeading,
                           colorChu: colorChu,
                           colorBox: colorBox,
                         );
@@ -149,7 +163,6 @@ class BatTrachScreenState extends State<BatTrachScreen> {
   void initState() {
     super.initState();
     SystemChrome.setPreferredOrientations([DeviceOrientation.portraitUp]);
-
     _loadJsonData(guaNumber: guaNumber00);
   }
 
@@ -236,5 +249,45 @@ class BatTrachScreenState extends State<BatTrachScreen> {
     } catch (e) {
       debugPrint('Error loading JSON file: $e');
     }
+  }
+
+  // Hàm tái sử dụng để xử lý dữ liệu góc và hướng (di chuyển từ streambuilder_degree.dart)
+  Map<String, dynamic> getHeadingData(double? angle) {
+    if (angle == null) {
+      return {
+        'heading': null,
+        'direction': 'Không xác định',
+      };
+    }
+
+    // Chuyển góc âm thành góc dương
+    if (angle < 0) {
+      angle += 360;
+    }
+
+    // Tính toán hướng từ góc
+    String direction;
+    if (angle >= 337.5 || angle < 22.5) {
+      direction = 'Bắc';
+    } else if (angle >= 22.5 && angle < 67.5) {
+      direction = 'Đông Bắc';
+    } else if (angle >= 67.5 && angle < 112.5) {
+      direction = 'Đông';
+    } else if (angle >= 112.5 && angle < 157.5) {
+      direction = 'Đông Nam';
+    } else if (angle >= 157.5 && angle < 202.5) {
+      direction = 'Nam';
+    } else if (angle >= 202.5 && angle < 247.5) {
+      direction = 'Tây Nam';
+    } else if (angle >= 247.5 && angle < 292.5) {
+      direction = 'Tây';
+    } else {
+      direction = 'Tây Bắc';
+    }
+
+    return {
+      'heading': angle,
+      'direction': direction,
+    };
   }
 }
