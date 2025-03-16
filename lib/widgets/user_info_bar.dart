@@ -14,54 +14,42 @@ class UserInfoBar extends StatefulWidget {
 }
 
 class _UserInfoBarState extends State<UserInfoBar> {
-  String _gender = ''; // Giá trị mặc định
-  String birthYear = ''; // Giá trị mặc định
+  String _gender = '';
+  String birthYear = '';
   final TextEditingController _yearController = TextEditingController();
   final FocusNode _yearFocusNode = FocusNode();
-  String _guaResult = ''; // Kết quả quái số và mệnh
+  String _guaResult = '';
 
   @override
   Widget build(BuildContext context) {
-    // Cài đặt giao diện status bar
-    SystemChrome.setSystemUIOverlayStyle(
-      const SystemUiOverlayStyle(
-        statusBarColor: Color(0xDEBE0A0A),
-      ),
-    );
-
     return Container(
-      color: const Color(0xDEBE0A0A), // Màu nền của status bar
+      color: const Color(0xDEBE0A0A), // Màu nền của user bar
       padding: const EdgeInsets.symmetric(horizontal: 16.0, vertical: 8),
       child: Column(
         children: [
           Row(
             mainAxisAlignment: MainAxisAlignment.spaceBetween,
             children: [
-              // Logo
               SizedBox(
-                height: 48, // Chiều cao của container chứa ảnh
-                width: 48, // Chiều rộng của container chứa ảnh
+                height: 48,
+                width: 48,
                 child: Image.asset(
                   'assets/images/icon_app_mini.png',
-                  fit: BoxFit.contain, // Đảm bảo ảnh không bị méo
+                  fit: BoxFit.contain,
                 ),
               ),
-              const SizedBox(width: 0), // Khoảng cách giữa logo và radio
-              // Chọn giới tính
+              const SizedBox(width: 0),
               Expanded(
                 child: _buildGenderSelection(),
               ),
-              const SizedBox(width: 0), // Khoảng cách giữa radio và ô nhập năm
-              // Nhập năm sinh
+              const SizedBox(width: 0),
               SizedBox(
-                width: 100, // Đặt chiều rộng cố định cho TextField
+                width: 100,
                 child: _buildYearOfBirthField(),
               ),
             ],
           ),
-
           const SizedBox(height: 8),
-          // Hiển thị quái số và mệnh
           Text(
             _guaResult,
             style: const TextStyle(
@@ -77,29 +65,27 @@ class _UserInfoBarState extends State<UserInfoBar> {
 
   @override
   void dispose() {
-    _yearController.dispose(); // Giải phóng tài nguyên
-    _yearFocusNode.dispose(); // Giải phóng tài nguyên FocusNode
+    _yearController.dispose();
+    _yearFocusNode.dispose();
     super.dispose();
   }
 
-  // Widget chọn giới tính
   Widget _buildGenderSelection() {
     return Row(
       mainAxisAlignment: MainAxisAlignment.start,
       children: [
         _genderRadio('Nam'),
-        const SizedBox(width: 0), // Khoảng cách giữa các radio
+        const SizedBox(width: 0),
         _genderRadio('Nữ'),
       ],
     );
   }
 
-  // Widget nhập năm sinh
   Widget _buildYearOfBirthField() {
     return TextField(
       textAlign: TextAlign.center,
       controller: _yearController,
-      focusNode: _yearFocusNode, // Gắn FocusNode để quản lý focus
+      focusNode: _yearFocusNode,
       style: const TextStyle(color: Colors.white),
       decoration: InputDecoration(
         hintText: 'Năm sinh',
@@ -107,12 +93,11 @@ class _UserInfoBarState extends State<UserInfoBar> {
         border: OutlineInputBorder(
           borderRadius: BorderRadius.circular(8.0),
           borderSide: const BorderSide(
-            color: Color(0xFFFDFC99), // Màu viền
-            width: 2, // Độ dày viền
+            color: Color(0xFFFDFC99),
+            width: 2,
           ),
         ),
         enabledBorder: OutlineInputBorder(
-          // Viền khi ô không được nhấn
           borderRadius: BorderRadius.circular(8.0),
           borderSide: const BorderSide(
             color: Color(0xFFFDFC99),
@@ -120,7 +105,6 @@ class _UserInfoBarState extends State<UserInfoBar> {
           ),
         ),
         focusedBorder: OutlineInputBorder(
-          // Viền khi ô được nhấn vào
           borderRadius: BorderRadius.circular(8.0),
           borderSide: const BorderSide(
             color: Color(0xFFC7C400),
@@ -131,20 +115,18 @@ class _UserInfoBarState extends State<UserInfoBar> {
       ),
       keyboardType: TextInputType.number,
       inputFormatters: [
-        LengthLimitingTextInputFormatter(4), // Giới hạn nhập 4 ký tự
-        FilteringTextInputFormatter.digitsOnly, // Chỉ cho phép nhập số
+        LengthLimitingTextInputFormatter(4),
+        FilteringTextInputFormatter.digitsOnly,
       ],
       onChanged: (value) {
-        _notifyInfoChange(); // Gọi logic cập nhật thông tin
+        _notifyInfoChange();
         if (value.length == 4) {
-          // Nếu đủ 4 số, ẩn bàn phím
           _yearFocusNode.unfocus();
         }
       },
     );
   }
 
-  // Radio button cho giới tính
   Widget _genderRadio(String value) {
     return Row(
       children: [
@@ -154,7 +136,7 @@ class _UserInfoBarState extends State<UserInfoBar> {
           onChanged: (newValue) {
             setState(() {
               _gender = newValue!;
-              _notifyInfoChange(); // Cập nhật logic tính toán khi giới tính thay đổi
+              _notifyInfoChange();
               genderGlobal = newValue;
             });
           },
@@ -165,9 +147,7 @@ class _UserInfoBarState extends State<UserInfoBar> {
     );
   }
 
-  // Gọi callback khi thông tin thay đổi
   void _notifyInfoChange() {
-    // Ánh xạ giới tính từ tiếng Việt sang tiếng Anh
     final genderMapping = {'Nam': 'male', 'Nữ': 'female'};
     final mappedGender = genderMapping[_gender];
 
@@ -197,7 +177,7 @@ class _UserInfoBarState extends State<UserInfoBar> {
       }
     } else {
       setState(() {
-        birthYear = _yearController.text; // Cập nhật giá trị năm sinh
+        birthYear = _yearController.text;
       });
 
       if (_yearController.text.isNotEmpty && mappedGender != null) {

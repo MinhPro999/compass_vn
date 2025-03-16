@@ -9,7 +9,7 @@ class StreamBuilderCompassDegree extends StatelessWidget {
   // Kênh nhận dữ liệu từ native
   static const EventChannel _compassChannel = EventChannel('compass_stream');
 
-  // Hàm xác định hướng từ góc (giữ lại vì không liên quan trực tiếp đến cảm biến)
+  // Hàm xác định hướng từ góc
   String getDirectionFromAngle(double angle) {
     if (angle >= 337.5 || angle < 22.5) return 'Bắc';
     if (angle >= 22.5 && angle < 67.5) return 'Đông Bắc';

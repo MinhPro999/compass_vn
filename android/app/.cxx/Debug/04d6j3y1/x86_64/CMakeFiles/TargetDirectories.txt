@@ -1,0 +1,2 @@
+/Users/m.mac/app_dev/compass_vn/android/app/.cxx/Debug/04d6j3y1/x86_64/CMakeFiles/edit_cache.dir
+/Users/m.mac/app_dev/compass_vn/android/app/.cxx/Debug/04d6j3y1/x86_64/CMakeFiles/rebuild_cache.dir
