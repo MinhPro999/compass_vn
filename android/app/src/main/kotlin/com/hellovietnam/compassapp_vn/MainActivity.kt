@@ -42,7 +42,7 @@ class MainActivity : FlutterActivity() {
 
     private fun trackAppLaunch() {
         val parameters = Bundle()
-        parameters.putString("app_version", "2.2.1")
+        parameters.putString("app_version", "2.2.2")
         parameters.putString("platform", "android")
         appEventsLogger.logEvent("app_launch", parameters)
     }
