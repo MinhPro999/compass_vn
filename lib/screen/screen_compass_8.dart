@@ -1,14 +1,16 @@
 import 'dart:async';
 import 'dart:convert';
 
-import 'package:compass_vn/core/culcalator_monster.dart';
+import 'package:compass_vn/core/state_manager.dart';
 import 'package:compass_vn/core/main_compass.dart';
 import 'package:compass_vn/widgets/build_infobox_8.dart';
-import 'package:compass_vn/widgets/user_info_bar.dart';
+
+import 'package:compass_vn/utils/compass_utils.dart';
 import 'package:flutter/material.dart';
 import 'package:flutter/services.dart';
 
-int guaNumber00 = 0;
+@Deprecated('Sử dụng StateManager() thay thế')
+int get guaNumber00 => StateManager().guaNumber;
 
 class BatTrachScreen extends StatefulWidget {
   const BatTrachScreen({
@@ -26,6 +28,7 @@ class BatTrachScreenState extends State<BatTrachScreen> {
   Map<String, dynamic> yNghiaCungMap = {};
   Map<String, dynamic> nenKhongNenMap = {};
   StreamSubscription? _compassSubscription;
+  late StateManager _stateManager;
 
   // Kênh nhận dữ liệu từ native
   static const EventChannel _compassChannel = EventChannel('compass_stream');
@@ -41,7 +44,7 @@ class BatTrachScreenState extends State<BatTrachScreen> {
           },
         ),
         title: Text(
-          'La Bàn Bát Trạch $genderGlobal $yearGlobal',
+          'La Bàn Bát Trạch ${_stateManager.gender} ${_stateManager.yearOfBirth}',
           style: const TextStyle(
             fontSize: 20,
             fontWeight: FontWeight.bold,
@@ -162,8 +165,9 @@ class BatTrachScreenState extends State<BatTrachScreen> {
   @override
   void initState() {
     super.initState();
+    _stateManager = StateManager();
     SystemChrome.setPreferredOrientations([DeviceOrientation.portraitUp]);
-    _loadJsonData(guaNumber: guaNumber00);
+    _loadJsonData(guaNumber: _stateManager.guaNumber);
   }
 
   Map<String, String> _getDetailedInfo(String direction) {
@@ -251,7 +255,6 @@ class BatTrachScreenState extends State<BatTrachScreen> {
     }
   }
 
-  // Hàm tái sử dụng để xử lý dữ liệu góc và hướng (di chuyển từ streambuilder_degree.dart)
   Map<String, dynamic> getHeadingData(double? angle) {
     if (angle == null) {
       return {
@@ -265,29 +268,9 @@ class BatTrachScreenState extends State<BatTrachScreen> {
       angle += 360;
     }
 
-    // Tính toán hướng từ góc
-    String direction;
-    if (angle >= 337.5 || angle < 22.5) {
-      direction = 'Bắc';
-    } else if (angle >= 22.5 && angle < 67.5) {
-      direction = 'Đông Bắc';
-    } else if (angle >= 67.5 && angle < 112.5) {
-      direction = 'Đông';
-    } else if (angle >= 112.5 && angle < 157.5) {
-      direction = 'Đông Nam';
-    } else if (angle >= 157.5 && angle < 202.5) {
-      direction = 'Nam';
-    } else if (angle >= 202.5 && angle < 247.5) {
-      direction = 'Tây Nam';
-    } else if (angle >= 247.5 && angle < 292.5) {
-      direction = 'Tây';
-    } else {
-      direction = 'Tây Bắc';
-    }
-
     return {
       'heading': angle,
-      'direction': direction,
+      'direction': CompassUtils.getDirectionFromAngle(angle),
     };
   }
 }

@@ -86,14 +86,14 @@ class MyThemeData {
             const TextStyle(fontWeight: FontWeight.w600, fontSize: 18),
           ),
           shadowColor: WidgetStateProperty.all(
-            const Color(0xffd32f2f).withOpacity(0.5),
+            const Color(0xffd32f2f).withValues(alpha: 0.5),
           ),
           padding: WidgetStateProperty.all(
             const EdgeInsets.symmetric(horizontal: 30, vertical: 16),
           ),
         ),
       ),
-      splashColor: const Color(0xffffcc00).withOpacity(0.3),
+      splashColor: const Color(0xffffcc00).withValues(alpha: 0.3),
       highlightColor: Colors.transparent,
     );
   }

@@ -1,8 +1,9 @@
-import 'package:compass_vn/core/culcalator_monster.dart';
+import 'package:compass_vn/core/state_manager.dart';
 import 'package:flutter/material.dart';
 import 'package:flutter/services.dart';
 
-String genderGlobal = "";
+@Deprecated('Sử dụng StateManager() thay thế')
+String get genderGlobal => StateManager().gender;
 
 class UserInfoBar extends StatefulWidget {
   final Function(String yearOfBirth, String gender)? onInfoChanged;
@@ -14,11 +15,20 @@ class UserInfoBar extends StatefulWidget {
 }
 
 class _UserInfoBarState extends State<UserInfoBar> {
-  String _gender = '';
-  String birthYear = '';
   final TextEditingController _yearController = TextEditingController();
   final FocusNode _yearFocusNode = FocusNode();
-  String _guaResult = '';
+  late StateManager _stateManager;
+
+  @override
+  void initState() {
+    super.initState();
+    _stateManager = StateManager();
+    _stateManager.addListener(_onStateChanged);
+  }
+
+  void _onStateChanged() {
+    setState(() {});
+  }
 
   @override
   Widget build(BuildContext context) {
@@ -51,7 +61,7 @@ class _UserInfoBarState extends State<UserInfoBar> {
           ),
           const SizedBox(height: 8),
           Text(
-            _guaResult,
+            _stateManager.getDisplayInfo(),
             style: const TextStyle(
               color: Colors.white,
               fontSize: 16,
@@ -65,6 +75,7 @@ class _UserInfoBarState extends State<UserInfoBar> {
 
   @override
   void dispose() {
+    _stateManager.removeListener(_onStateChanged);
     _yearController.dispose();
     _yearFocusNode.dispose();
     super.dispose();
@@ -132,13 +143,10 @@ class _UserInfoBarState extends State<UserInfoBar> {
       children: [
         Radio<String>(
           value: value,
-          groupValue: _gender,
+          groupValue: _stateManager.gender,
           onChanged: (newValue) {
-            setState(() {
-              _gender = newValue!;
-              _notifyInfoChange();
-              genderGlobal = newValue;
-            });
+            _stateManager.updateUserInfo(gender: newValue);
+            _notifyInfoChange();
           },
           activeColor: const Color(0xFFC7C400),
         ),
@@ -148,63 +156,15 @@ class _UserInfoBarState extends State<UserInfoBar> {
   }
 
   void _notifyInfoChange() {
-    final genderMapping = {'Nam': 'male', 'Nữ': 'female'};
-    final mappedGender = genderMapping[_gender];
+    // Cập nhật StateManager với thông tin mới
+    _stateManager.updateUserInfo(
+      gender: _stateManager.gender,
+      yearOfBirth: _yearController.text,
+    );
 
+    // Thông báo cho widget cha nếu có callback
     if (widget.onInfoChanged != null) {
-      widget.onInfoChanged!(_yearController.text, _gender);
-    }
-
-    if (_yearController.text.isNotEmpty && mappedGender != null) {
-      try {
-        final yearOfBirth = int.parse(_yearController.text);
-        final result =
-            GuaCalculator.determineMansion(yearOfBirth, mappedGender);
-
-        if (result.containsKey('error')) {
-          setState(() {
-            _guaResult = "Lỗi: ${result['error']}";
-          });
-        } else {
-          final guaNumber = result['guaNumber'].toString();
-          final mansion = result['mansion'];
-          setState(() {
-            _guaResult = "Quái số: $guaNumber, Mệnh: $mansion";
-          });
-        }
-      } catch (e) {
-        debugPrint("Lỗi khi tính toán: $e");
-      }
-    } else {
-      setState(() {
-        birthYear = _yearController.text;
-      });
-
-      if (_yearController.text.isNotEmpty && mappedGender != null) {
-        try {
-          final yearOfBirth = int.parse(_yearController.text);
-          final result =
-              GuaCalculator.determineMansion(yearOfBirth, mappedGender);
-
-          if (result.containsKey('error')) {
-            setState(() {
-              _guaResult = "Lỗi: ${result['error']}";
-            });
-          } else {
-            final guaNumber = result['guaNumber'].toString();
-            final mansion = result['mansion'];
-            setState(() {
-              _guaResult = "Quái số: $guaNumber, Mệnh: $mansion";
-            });
-          }
-        } catch (e) {
-          debugPrint("Lỗi khi tính toán: $e");
-        }
-      } else {
-        setState(() {
-          _guaResult = "Chưa có đủ dữ liệu để tính toán";
-        });
-      }
+      widget.onInfoChanged!(_yearController.text, _stateManager.gender);
     }
   }
 }

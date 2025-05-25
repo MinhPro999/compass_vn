@@ -1,9 +1,8 @@
 // ignore_for_file: deprecated_member_use
 
-import 'package:compass_vn/core/culcalator_monster.dart';
+import 'package:compass_vn/core/state_manager.dart';
 import 'package:compass_vn/screen/screen_compass.dart';
 import 'package:compass_vn/screen/screen_compass_8.dart';
-import 'package:compass_vn/screen/screen_compass_map.dart';
 import 'package:compass_vn/widgets/funtion_gidview.dart';
 import 'package:compass_vn/widgets/user_info_bar.dart';
 import 'package:flutter/material.dart';
@@ -27,7 +26,7 @@ class HomeScreen extends StatelessWidget {
               fit: BoxFit.cover,
               width: double.infinity,
               height: double.infinity,
-              color: Colors.black.withOpacity(0.1),
+              color: Colors.black.withValues(alpha: 0.1),
               colorBlendMode: BlendMode.srcATop,
             ),
             SafeArea(
@@ -61,7 +60,7 @@ class HomeScreen extends StatelessWidget {
                               ),
                               shrinkWrap: true,
                               physics: const NeverScrollableScrollPhysics(),
-                              itemCount: 3,
+                              itemCount: 2,
                               itemBuilder: (context, index) {
                                 if (index == 0) {
                                   return funtionGidview(
@@ -80,60 +79,42 @@ class HomeScreen extends StatelessWidget {
                                       );
                                     },
                                   );
-                                } else if (index == 1) {
-                                  return funtionGidview(
-                                    'assets/images/24_directions.JPG',
-                                    'La bàn theo tuổi',
-                                    () {
-                                      if (genderGlobal.isEmpty ||
-                                          yearGlobal.isEmpty) {
-                                        showDialog(
-                                          context: context,
-                                          builder: (context) => AlertDialog(
-                                            title: const Text(
-                                                'Thông tin bị thiếu!'),
-                                            content: const Text(
-                                              'Bạn cần lựa chọn giới tính và nhập đầy đủ năm sinh ở ngay phía trên trước khi sử dụng La Bàn này.',
+                                }
+                                return funtionGidview(
+                                  'assets/images/24_directions.JPG',
+                                  'La bàn theo tuổi',
+                                  () {
+                                    final stateManager = StateManager();
+                                    if (!stateManager.hasValidUserInfo) {
+                                      showDialog(
+                                        context: context,
+                                        builder: (context) => AlertDialog(
+                                          title:
+                                              const Text('Thông tin bị thiếu!'),
+                                          content: const Text(
+                                            'Bạn cần lựa chọn giới tính và nhập đầy đủ năm sinh ở ngay phía trên trước khi sử dụng La Bàn này.',
+                                          ),
+                                          actions: [
+                                            TextButton(
+                                              onPressed: () {
+                                                Navigator.of(context).pop();
+                                              },
+                                              child: const Text('ĐỒNG Ý'),
                                             ),
-                                            actions: [
-                                              TextButton(
-                                                onPressed: () {
-                                                  Navigator.of(context).pop();
-                                                },
-                                                child: const Text('ĐỒNG Ý'),
-                                              ),
-                                            ],
-                                          ),
-                                        );
-                                      } else {
-                                        Navigator.push(
-                                          context,
-                                          MaterialPageRoute(
-                                            builder: (context) =>
-                                                const BatTrachScreen(),
-                                          ),
-                                        );
-                                      }
-                                    },
-                                  );
-                                } else {
-                                  return funtionGidview(
-                                    'assets/images/24_directions.JPG',
-                                    'La bàn địa hình',
-                                    () {
+                                          ],
+                                        ),
+                                      );
+                                    } else {
                                       Navigator.push(
                                         context,
                                         MaterialPageRoute(
                                           builder: (context) =>
-                                              const CompassMapScreen(
-                                            title: '',
-                                            description: '',
-                                          ),
+                                              const BatTrachScreen(),
                                         ),
                                       );
-                                    },
-                                  );
-                                }
+                                    }
+                                  },
+                                );
                               },
                             ),
                           ],

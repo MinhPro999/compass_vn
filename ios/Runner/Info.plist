@@ -41,6 +41,13 @@
 	</array>
 	<key>ITSAppUsesNonExemptEncryption</key>
     <false/>
-
+    
+    <!-- Quyền truy cập vị trí -->
+    <key>NSLocationWhenInUseUsageDescription</key>
+    <string>Ứng dụng cần quyền truy cập vị trí để xác định hướng la bàn chính xác</string>
+    
+    <!-- Quyền truy cập cảm biến chuyển động -->
+    <key>NSMotionUsageDescription</key>
+    <string>Ứng dụng cần quyền truy cập cảm biến để xác định hướng la bàn</string>
 </dict>
 </plist>

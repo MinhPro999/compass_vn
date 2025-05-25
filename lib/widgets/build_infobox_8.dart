@@ -61,11 +61,11 @@ class BuildInfoBox8 extends StatelessWidget {
       width: 400, // Đặt chiều rộng cố định
       height: 190, // Đặt chiều cao cố định
       decoration: BoxDecoration(
-        color: colorBox.withOpacity(0.68686868),
+        color: colorBox.withValues(alpha: 0.68686868),
         borderRadius: BorderRadius.circular(12),
         boxShadow: [
           BoxShadow(
-            color: Colors.black.withOpacity(0.268268),
+            color: Colors.black.withValues(alpha: 0.268268),
             blurRadius: 8,
             offset: const Offset(0, 4),
           ),

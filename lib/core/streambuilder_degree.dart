@@ -2,6 +2,7 @@
 
 import 'package:flutter/material.dart';
 import 'package:flutter/services.dart';
+import 'package:compass_vn/utils/compass_utils.dart';
 
 class StreamBuilderCompassDegree extends StatelessWidget {
   const StreamBuilderCompassDegree({super.key});
@@ -52,8 +53,8 @@ class StreamBuilderCompassDegree extends StatelessWidget {
           );
         }
 
-        // Tính hướng từ góc đã làm mượt từ native
-        final String direction = getDirectionFromAngle(filteredAngle);
+        final String direction =
+            CompassUtils.getDirectionFromAngle(filteredAngle);
 
         // Hiển thị dữ liệu góc và hướng
         return Container(
