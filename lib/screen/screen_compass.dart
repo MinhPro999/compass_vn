@@ -1,10 +1,11 @@
 import 'package:compass_vn/core/main_compass.dart';
 import 'package:compass_vn/core/streambuilder_degree.dart';
+import 'package:compass_vn/services/facebook_analytics_service.dart';
 
 import 'package:flutter/material.dart';
 import 'package:flutter/services.dart';
 
-class CompassDetailScreen extends StatelessWidget {
+class CompassDetailScreen extends StatefulWidget {
   final String title;
   final String description;
   final String backgroundImagePath = 'assets/images/screen_dang.jpg';
@@ -16,6 +17,33 @@ class CompassDetailScreen extends StatelessWidget {
     required this.title,
     required this.description,
   });
+
+  @override
+  State<CompassDetailScreen> createState() => _CompassDetailScreenState();
+}
+
+class _CompassDetailScreenState extends State<CompassDetailScreen> {
+  DateTime? _sessionStartTime;
+
+  @override
+  void initState() {
+    super.initState();
+    _sessionStartTime = DateTime.now();
+
+    // Track screen view
+    FacebookAnalyticsService.logScreenView('basic_compass_screen');
+    FacebookAnalyticsService.logCompassUsage();
+  }
+
+  @override
+  void dispose() {
+    // Track session duration
+    if (_sessionStartTime != null) {
+      final duration = DateTime.now().difference(_sessionStartTime!);
+      FacebookAnalyticsService.logSessionDuration(duration.inSeconds);
+    }
+    super.dispose();
+  }
 
   @override
   Widget build(BuildContext context) {
@@ -51,7 +79,7 @@ class CompassDetailScreen extends StatelessWidget {
       body: Stack(
         children: [
           Image.asset(
-            backgroundImagePath,
+            widget.backgroundImagePath,
             fit: BoxFit.cover,
             width: double.infinity,
             height: double.infinity,
@@ -71,20 +99,21 @@ class CompassDetailScreen extends StatelessWidget {
                           alignment: Alignment.center,
                           children: [
                             Image.asset(
-                              overlayImagePath,
+                              widget.overlayImagePath,
                               height: 400,
                               width: 400,
                               fit: BoxFit.contain,
                             ),
                             CompassWidget(
-                                compassImagePath: compassImagePathScreen),
+                                compassImagePath:
+                                    widget.compassImagePathScreen),
                           ],
                         ),
                         const SizedBox(height: 8),
                         const StreamBuilderCompassDegree(),
                         const SizedBox(height: 8),
                         Text(
-                          description,
+                          widget.description,
                           style: const TextStyle(
                             fontSize: 16,
                             color: Colors.white70,

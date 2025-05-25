@@ -4,13 +4,19 @@ import android.hardware.Sensor
 import android.hardware.SensorEvent
 import android.hardware.SensorEventListener
 import android.hardware.SensorManager
+import android.os.Bundle
+import com.facebook.FacebookSdk
+import com.facebook.appevents.AppEventsLogger
+import com.facebook.appevents.AppEventsConstants
 import io.flutter.embedding.android.FlutterActivity
 import io.flutter.embedding.engine.FlutterEngine
 import io.flutter.plugin.common.EventChannel
+import io.flutter.plugin.common.MethodChannel
 import kotlin.math.atan2
 
 class MainActivity : FlutterActivity() {
     private val CHANNEL = "compass_stream"
+    private val ANALYTICS_CHANNEL = "facebook_analytics"
     private lateinit var sensorManager: SensorManager
     private var accelerometer: Sensor? = null
     private var magnetometer: Sensor? = null
@@ -18,9 +24,53 @@ class MainActivity : FlutterActivity() {
     private var magnetometerReading = FloatArray(3)
     private var filteredAngle = 0.0
     private val alpha = 0.33
+    private lateinit var appEventsLogger: AppEventsLogger
+
+    override fun onCreate(savedInstanceState: Bundle?) {
+        super.onCreate(savedInstanceState)
+
+        // Initialize Facebook SDK
+        FacebookSdk.sdkInitialize(applicationContext)
+        AppEventsLogger.activateApp(application)
+
+        // Initialize Facebook Analytics Logger
+        appEventsLogger = AppEventsLogger.newLogger(this)
+
+        // Track App Launch Event
+        trackAppLaunch()
+    }
+
+    private fun trackAppLaunch() {
+        val parameters = Bundle()
+        parameters.putString("app_version", "2.2.1")
+        parameters.putString("platform", "android")
+        appEventsLogger.logEvent("app_launch", parameters)
+    }
 
     override fun configureFlutterEngine(flutterEngine: FlutterEngine) {
         super.configureFlutterEngine(flutterEngine)
+
+        // Setup Facebook Analytics Method Channel
+        MethodChannel(flutterEngine.dartExecutor.binaryMessenger, ANALYTICS_CHANNEL).setMethodCallHandler { call, result ->
+            when (call.method) {
+                "logEvent" -> {
+                    val eventName = call.argument<String>("eventName") ?: ""
+                    val parameters = call.argument<Map<String, Any>>("parameters") ?: emptyMap()
+                    logFacebookEvent(eventName, parameters)
+                    result.success(true)
+                }
+                "logCompassUsage" -> {
+                    logCompassUsage()
+                    result.success(true)
+                }
+                "logScreenView" -> {
+                    val screenName = call.argument<String>("screenName") ?: ""
+                    logScreenView(screenName)
+                    result.success(true)
+                }
+                else -> result.notImplemented()
+            }
+        }
 
         EventChannel(flutterEngine.dartExecutor.binaryMessenger, CHANNEL).setStreamHandler(
             object : EventChannel.StreamHandler {
@@ -94,5 +144,51 @@ class MainActivity : FlutterActivity() {
                 }
             }
         )
+    }
+
+    // Facebook Analytics tracking methods
+    private fun logFacebookEvent(eventName: String, parameters: Map<String, Any>) {
+        val bundle = Bundle()
+        for ((key, value) in parameters) {
+            when (value) {
+                is String -> bundle.putString(key, value)
+                is Int -> bundle.putInt(key, value)
+                is Double -> bundle.putDouble(key, value)
+                is Boolean -> bundle.putBoolean(key, value)
+                else -> bundle.putString(key, value.toString())
+            }
+        }
+        appEventsLogger.logEvent(eventName, bundle)
+    }
+
+    private fun logCompassUsage() {
+        val parameters = Bundle()
+        parameters.putString("feature", "compass")
+        parameters.putString("action", "view_compass")
+        parameters.putLong("timestamp", System.currentTimeMillis())
+        appEventsLogger.logEvent("compass_usage", parameters)
+    }
+
+    private fun logScreenView(screenName: String) {
+        val parameters = Bundle()
+        parameters.putString("screen_name", screenName)
+        parameters.putLong("timestamp", System.currentTimeMillis())
+        appEventsLogger.logEvent(AppEventsConstants.EVENT_NAME_VIEWED_CONTENT, parameters)
+    }
+
+    override fun onResume() {
+        super.onResume()
+        // Track app resume
+        val parameters = Bundle()
+        parameters.putString("action", "app_resume")
+        appEventsLogger.logEvent("app_activity", parameters)
+    }
+
+    override fun onPause() {
+        super.onPause()
+        // Track app pause
+        val parameters = Bundle()
+        parameters.putString("action", "app_pause")
+        appEventsLogger.logEvent("app_activity", parameters)
     }
 }

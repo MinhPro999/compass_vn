@@ -3,13 +3,26 @@
 import 'package:compass_vn/core/state_manager.dart';
 import 'package:compass_vn/screen/screen_compass.dart';
 import 'package:compass_vn/screen/screen_compass_8.dart';
+import 'package:compass_vn/services/facebook_analytics_service.dart';
 import 'package:compass_vn/widgets/funtion_gidview.dart';
 import 'package:compass_vn/widgets/user_info_bar.dart';
 import 'package:flutter/material.dart';
 import 'package:flutter/services.dart';
 
-class HomeScreen extends StatelessWidget {
+class HomeScreen extends StatefulWidget {
   const HomeScreen({super.key});
+
+  @override
+  State<HomeScreen> createState() => _HomeScreenState();
+}
+
+class _HomeScreenState extends State<HomeScreen> {
+  @override
+  void initState() {
+    super.initState();
+    // Track screen view
+    FacebookAnalyticsService.logScreenView('home_screen');
+  }
 
   @override
   Widget build(BuildContext context) {
@@ -67,6 +80,15 @@ class HomeScreen extends StatelessWidget {
                                     'assets/images/normal_compass.JPG',
                                     'La bàn cơ bản',
                                     () {
+                                      // Track compass selection
+                                      FacebookAnalyticsService.logFeatureUsage(
+                                          'basic_compass');
+                                      FacebookAnalyticsService
+                                          .logUserEngagement('compass_selected',
+                                              additionalParams: {
+                                            'compass_type': 'basic'
+                                          });
+
                                       Navigator.push(
                                         context,
                                         MaterialPageRoute(
@@ -84,8 +106,19 @@ class HomeScreen extends StatelessWidget {
                                   'assets/images/24_directions.JPG',
                                   'La bàn theo tuổi',
                                   () {
+                                    // Track age compass selection attempt
+                                    FacebookAnalyticsService.logUserEngagement(
+                                        'age_compass_attempted');
+
                                     final stateManager = StateManager();
                                     if (!stateManager.hasValidUserInfo) {
+                                      // Track missing user info
+                                      FacebookAnalyticsService.logEvent(
+                                          'user_info_missing', {
+                                        'screen': 'home_screen',
+                                        'feature': 'age_compass'
+                                      });
+
                                       showDialog(
                                         context: context,
                                         builder: (context) => AlertDialog(
@@ -105,6 +138,15 @@ class HomeScreen extends StatelessWidget {
                                         ),
                                       );
                                     } else {
+                                      // Track successful age compass access
+                                      FacebookAnalyticsService.logFeatureUsage(
+                                          'age_compass');
+                                      FacebookAnalyticsService
+                                          .logUserEngagement('compass_selected',
+                                              additionalParams: {
+                                            'compass_type': 'age_based'
+                                          });
+
                                       Navigator.push(
                                         context,
                                         MaterialPageRoute(
